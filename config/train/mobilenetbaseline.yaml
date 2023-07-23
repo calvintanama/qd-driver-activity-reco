@@ -1,0 +1,52 @@
+experiment:
+  name: "MobileNetBaseline"
+  model_save_path: "./model" # path to save the trained model
+  experiment_number: 0 # do not forget to change the experiment number
+
+data:
+  name: "DriveAndAct"
+  util_location: "framework_activity_recognition.datautils.prepare_drivenact"
+  split_nr: 0 # 1 2
+  folder_splits: # path to folder containing split ex: "./driveandact/iccv_activities_3s/activities_3s/"
+  data_path: # path to folder containing downsampled Drive&Act video data
+  views: ["inner_mirror"]
+  new_suffix: ".avi"
+  sampler:
+    use: True
+    location: "framework_activity_recognition.sampler.ImbalancedDatasetSampler"
+    parameter: {}
+  n_frame: 16
+  frame_size: 224 # 112
+
+student:
+  location: "architecture.mobilenet.MobileNetLogit"
+  width_mult: 0.5 # 1.0 1.5
+  dropout_prob: 0.2
+  name: "inception"
+  
+
+pretraining:
+  use: True
+  path: # path to I3D model pretrained with Kinetics-400
+  model_num_classes: 600
+  fine_tune_only_last_layer: False
+    
+train:
+  modality: "train_baseline"
+  epoch: 200
+  criterion: 
+    name : "CrossEntropyLoss"
+  optimizer:
+    name: "SGD"
+    parameter: {"lr": 0.05, "momentum": 0.9, "weight_decay": 0.00001}
+  batch_size: 90
+  num_workers: 8
+  scheduler:
+    use: True
+    name: "MultiStepLR"
+    parameter: {"milestones": [50,100,200,300,400,500,600,700], "gamma": 0.2}
+  test_rate: 5
+  pin_memory: False
+
+config:
+  path: "./config/train/mobilenetbaseline.yaml"

@@ -1,0 +1,27 @@
+data:
+  name: "DriveAndAct"
+  util_location: "framework_activity_recognition.datautils.prepare_drivenact_test"
+  split_nr: 0
+  folder_splits: # path to folder containing split ex: "./driveandact/iccv_activities_3s/activities_3s/"
+  data_path: # path to folder containing downsampled Drive&Act video data
+  views: ["inner_mirror"]
+  new_suffix: ".avi"
+  n_frame: 16
+  frame_size: 224 # 112
+  
+architecture:
+  location: "architecture.mobilenetquant.MobileNetLogit"
+  width_mult: 0.5 # 1.0 1.5
+  dropout_prob: 0.2
+  pool:
+    kernel: 1
+    width: 7
+    height: 7
+  model: # path to quantized MobileNet model checkpoint to test ex: ./best_model.pth, adjust according splits
+
+train:
+  batch_size: 90
+  num_workers: 4
+  quantization:
+    backend: 'fbgemm'
+  pin_memory: False

@@ -1,0 +1,65 @@
+experiment:
+  name: "StudentTeacher"
+  model_save_path: "./model" # path to save the trained model
+  experiment_number: 0 # do not forget to change the experiment number
+
+data:
+  name: "DriveAndAct"
+  util_location: "framework_activity_recognition.datautils.prepare_drivenact"
+  split_nr: 0 # 1 2
+  folder_splits: # path to folder containing split ex: "./driveandact/iccv_activities_3s/activities_3s/"
+  data_path: # path to folder containing downsampled Drive&Act video data
+  views: ["inner_mirror"]
+  new_suffix: ".avi"
+  sampler:
+    use: True
+    location: "framework_activity_recognition.sampler.ImbalancedDatasetSampler"
+    parameter: {}
+  n_frame: 16
+  frame_size: 224
+
+teacher:
+  location: "architecture.i3d.I3DLogit"
+  modality: "rgb"
+  dropout_prob: 0.5
+  name: "inception"
+  checkpoint: # path to I3D model trained with Drive&Act checkpoint ex: ./best_model.pth, adjust according splits
+
+student:
+  location: "architecture.mobilenet.MobileNetLogit"
+  width_mult: 0.5 # 1.0 1.5
+  dropout_prob: 0.2
+  name: "inception"
+
+pretraining:
+  use: True
+  #student
+  path:  # path to MobileNet model pretrained with Kinetics-600
+  student_model_num_classes: 600
+  fine_tune_only_last_layer: False
+  #teacher (used although pretraining["use"] = true)
+  teacher_model_num_classes: 400
+  last_layer_variable: "conv3d_0c_1x1"
+  last_layer_class: "architecture.i3d.Unit3Dpy"
+  last_layer_parameter: {"in_channels": 1024, "kernel_size": !!python/tuple [1, 1 ,1], "activation": null, "use_bias": True, "use_bn": False}
+
+train:
+  modality: "train_st"
+  epoch: 200
+  criterion: 
+    name : "CrossEntropyLoss"
+  optimizer:
+    name: "SGD"
+    parameter: {"lr": 0.1, "momentum": 0.9, "weight_decay": 0.00001}
+  batch_size: 32
+  num_workers: 4
+  scheduler:
+    use: True
+    name: "MultiStepLR"
+    parameter: {"milestones": [50,100,200,300,400,500,600,700], "gamma": 0.2}
+  test_rate: 5
+  temperature: 3 # 1 5 7 9
+  teacher_weight: 0.9 # 0.5 0.6 0.7 0.8 1.0
+
+config:
+  path: "./config/train/studentteacher.yaml"

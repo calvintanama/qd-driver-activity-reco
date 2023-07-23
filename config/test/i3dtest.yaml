@@ -1,0 +1,22 @@
+data:
+  name: "DriveAndAct"
+  util_location: "framework_activity_recognition.datautils.prepare_drivenact_test"
+  split_nr: 0 # 1 2
+  folder_splits: # path to folder containing split ex: "./driveandact/iccv_activities_3s/activities_3s/"
+  data_path: # path to folder containing downsampled Drive&Act video data
+  views: ["inner_mirror"]
+  new_suffix: ".avi"
+  n_frame: 16 # 32 64
+  frame_size: 224
+
+architecture:
+  location: "architecture.i3d.I3DLogit"
+  modality: "rgb"
+  dropout_prob: 0.5
+  name: "inception"
+  model: # path to I3D model checkpoint to test ex: ./best_model.pth, adjust according splits
+
+train:
+  batch_size: 15
+  num_workers: 4
+  pin_memory: False
