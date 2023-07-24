@@ -7,6 +7,20 @@ Quantized Distillation: Optimizing Driver Activity Recognition Models for Resour
 
 # Setup
 
+Add folder called `model` in the same directory as above code to save trained checkpoints. Before training, the folder structure should look like this
+
+```
+├── [path to your cloned repository]
+    ├── architecture
+    ├── config
+    ├── framework_activity_recognition
+    ├── model    # add this
+    ├── LICENSE
+    ├── README.md
+    └── requirement.txt
+```
+Do not forget to install the requirement stated in the folder.
+
 ### Dataset
 [Drive&Act](https://driveandact.com/)
 
