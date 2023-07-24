@@ -53,7 +53,7 @@ To test another model, replace the yaml file in the command with one of the foll
 
 ```
 ├── ./config
-    ├── /train
+    ├── /test
         ├── i3dtest.yaml             # RGB I3D test on Drive&Act test split
         ├── mobilenetquanttest.yaml  # MobileNet3D with PyTorch quantization test on Drive&Act test split
         └── mobilenettest.yaml       # MobileNet3D test on Drive&Act test split
